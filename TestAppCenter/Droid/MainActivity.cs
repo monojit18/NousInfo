@@ -5,9 +5,10 @@ using Android.App;
 using Android.Widget;
 using Android.OS;
 
-//using Microsoft.AppCenter;
-//using Microsoft.AppCenter.Analytics;
-//using Microsoft.AppCenter.Crashes;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Push;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 
 namespace TestAppCenter.Droid
 {
@@ -23,7 +24,34 @@ namespace TestAppCenter.Droid
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
 
-            //AppCenter.Start("b76658b1-79d5-4cb4-9e4c-7085312253d3", typeof(Analytics), typeof(Crashes));
+            if (!AppCenter.Configured)
+            {
+                Push.PushNotificationReceived += (sender, e) =>
+                {
+                    // Add the notification message and title to the message
+                    var summary = $"Push notification received:" +
+                                        $"\n\tNotification title: {e.Title}" +
+                                        $"\n\tMessage: {e.Message}";
+
+                    // If there is custom data associated with the notification,
+                    // print the entries
+                    if (e.CustomData != null)
+                    {
+                        summary += "\n\tCustom data:\n";
+                        foreach (var key in e.CustomData.Keys)
+                        {
+                            summary += $"\t\t{key} : {e.CustomData[key]}\n";
+                        }
+                    }
+
+                    Toast.MakeText(this, summary, ToastLength.Long).Show();
+
+                    // Send the notification summary to debug output
+                    System.Diagnostics.Debug.WriteLine(summary);
+                };
+            }
+
+            AppCenter.Start("b0887dc8-d325-492b-8494-35b4cb188fe1", typeof(Push));
             //Analytics.TrackEvent("Main Acitivity loaded - Android");
 
             // Get our button from the layout resource,

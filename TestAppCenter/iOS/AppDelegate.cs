@@ -58,41 +58,53 @@ namespace TestAppCenter.iOS
 
             // application.SetMinimumBackgroundFetchInterval(UIApplication.BackgroundFetchIntervalMinimum);
 
-            //if (AppCenter.Configured == false)
-            //{
+            if (AppCenter.Configured == false)
+            {
 
-            //    Push.PushNotificationReceived += async (sender, e) =>
-            //    {
-            //            var summary = $"Push notification received:" +
-            //                            $"\n\tNotification title: {e.Title}" +
-            //                            $"\n\tMessage: {e.Message}";
+                Push.PushNotificationReceived += async (sender, e) =>
+                {
+                    var summary = $"Push notification received:" +
+                                    $"\n\tNotification title: {e.Title}" +
+                                    $"\n\tMessage: {e.Message}";
 
 
-            //            if (e.CustomData != null)
-            //            {
-            //                summary += "\n\tCustom data:\n";
-            //                foreach (var key in e.CustomData.Keys)
-            //                {
-            //                    summary += $"\t\t{key} : {e.CustomData[key]}\n";
-            //                System.Diagnostics.Debug.WriteLine(summary);
+                    if (e.CustomData != null)
+                    {
+                        summary += "\n\tCustom data:\n";
+                        foreach (var key in e.CustomData.Keys)
+                        {
+                            summary += $"\t\t{key} : {e.CustomData[key]}\n";
 
-            //                if (_httpClient == null)
-            //                    _httpClient = new HttpClient();
 
-            //                var urlString = $"https://jsonplaceholder.typicode.com/posts/";
-            //                var responseMessage = await _httpClient.GetAsync(urlString);
-            //                var responseString = await responseMessage?.Content?.ReadAsStringAsync();
-            //                Console.WriteLine(responseString);
+                            if (_httpClient == null)
+                                _httpClient = new HttpClient();
 
-            //                }
-            //            }
+                            var urlString = $"https://jsonplaceholder.typicode.com/posts/";
+                            var responseMessage = await _httpClient.GetAsync(urlString);
+                            var responseString = await responseMessage?.Content?.ReadAsStringAsync();
+                            Console.WriteLine(responseString);
 
-                        
+                        }
+                    }
 
-            //        };
-            //    }
+                    var alertController = UIAlertController.Create("Pushed", summary,
+                                                                   UIAlertControllerStyle.Alert);
+                    var alertAction = UIAlertAction.Create("OK", UIAlertActionStyle.Default,
+                                                     (UIAlertAction obj) =>
+                    {
 
-            //AppCenter.Start("7a16967b-a4d8-4a5f-9a94-11fe3ec22f01", typeof(Push), typeof(Analytics), typeof(Crashes));
+                        System.Diagnostics.Debug.WriteLine(summary);
+
+                    });
+
+                    alertController.AddAction(alertAction);
+                    Window.RootViewController.PresentViewController(alertController, true, null);
+
+                };
+            }
+
+            AppCenter.Start("28e50eab-b2cc-4e5f-8f80-a8c000957a91", typeof(Push), typeof(Analytics),
+                            typeof(Crashes));
             return true;
 
         }
