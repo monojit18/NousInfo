@@ -12,7 +12,7 @@ namespace TestFormsApp
         {
             InitializeComponent();
 
-            MainPage = new PhotoCapturePage();
+            MainPage = new MainPage();
         }
 
         protected override void OnStart()
