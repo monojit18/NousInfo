@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Foundation;
 using UIKit;
+
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Push;
 using Microsoft.AppCenter.Analytics;
@@ -58,52 +59,42 @@ namespace TestAppCenter.iOS
 
             // application.SetMinimumBackgroundFetchInterval(UIApplication.BackgroundFetchIntervalMinimum);
 
-            if (AppCenter.Configured == false)
+            if (!AppCenter.Configured)
             {
 
                 Push.PushNotificationReceived += async (sender, e) =>
                 {
-                    var summary = $"Push notification received:" +
-                                    $"\n\tNotification title: {e.Title}" +
-                                    $"\n\tMessage: {e.Message}";
+                        var summary = $"Push notification received:" +
+                                        $"\n\tNotification title: {e.Title}" +
+                                        $"\n\tMessage: {e.Message}";
 
 
-                    if (e.CustomData != null)
-                    {
-                        summary += "\n\tCustom data:\n";
-                        foreach (var key in e.CustomData.Keys)
+                        if (e.CustomData != null)
                         {
-                            summary += $"\t\t{key} : {e.CustomData[key]}\n";
+                            summary += "\n\tCustom data:\n";
+                            foreach (var key in e.CustomData.Keys)
+                            {
+                                summary += $"\t\t{key} : {e.CustomData[key]}\n";
+                                System.Diagnostics.Debug.WriteLine(summary);
 
+                                if (_httpClient == null)
+                                    _httpClient = new HttpClient();
 
-                            if (_httpClient == null)
-                                _httpClient = new HttpClient();
+                                var urlString = $"https://jsonplaceholder.typicode.com/posts/";
+                                var responseMessage = await _httpClient.GetAsync(urlString);
+                                var responseString = await responseMessage?.Content?.ReadAsStringAsync();
+                                Console.WriteLine(responseString);
 
-                            var urlString = $"https://jsonplaceholder.typicode.com/posts/";
-                            var responseMessage = await _httpClient.GetAsync(urlString);
-                            var responseString = await responseMessage?.Content?.ReadAsStringAsync();
-                            Console.WriteLine(responseString);
-
+                            }
                         }
-                    }
 
-                    var alertController = UIAlertController.Create("Pushed", summary,
-                                                                   UIAlertControllerStyle.Alert);
-                    var alertAction = UIAlertAction.Create("OK", UIAlertActionStyle.Default,
-                                                     (UIAlertAction obj) =>
-                    {
+                        
 
-                        System.Diagnostics.Debug.WriteLine(summary);
+                    };
+                }
 
-                    });
-
-                    alertController.AddAction(alertAction);
-                    Window.RootViewController.PresentViewController(alertController, true, null);
-
-                };
-            }
-
-            AppCenter.Start("28e50eab-b2cc-4e5f-8f80-a8c000957a91", typeof(Push), typeof(Analytics),
+            AppCenter.LogLevel = LogLevel.Verbose;
+            AppCenter.Start("ec9cade0-e3f7-4283-938a-d25ddfec7706", typeof(Push), typeof(Analytics),
                             typeof(Crashes));
             return true;
 
@@ -144,7 +135,7 @@ namespace TestAppCenter.iOS
         public NSString ViewMeBackdoor(NSString backdoorString)
         {
 
-            Debug.WriteLine(backdoorString);
+            Debug.WriteLine($"AppDelegate:{backdoorString}");
             return new NSString("OK");
 
         }

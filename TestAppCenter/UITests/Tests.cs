@@ -36,6 +36,12 @@ namespace TestAppCenter.UITests
             AppResult[] results = app.Query(button);
             app.Screenshot(results[0].Label);
 
+#if __IOS__
+            app.Invoke("viewMeBackdoor:", "testApDeelgatebackdoor");
+#elif __ANDROID__
+            app.Invoke("MainBackdoor", "testMainbackdoor");
+#endif
+
         }
 
         [Test]
@@ -47,7 +53,7 @@ namespace TestAppCenter.UITests
             app.Tap(clickMeButton);
 
             var buttonResults = app.Query(clickMeButton);
-            var buttonText = buttonResults[0].Label;
+            var buttonText = buttonResults[0].Text;
 
             app.ClearText(clickMeTextField);
             app.EnterText(clickMeTextField, buttonText);
@@ -82,9 +88,9 @@ namespace TestAppCenter.UITests
             Assert.AreEqual(clickMeText, viewMeText);
 
 #if __IOS__
-            app.Invoke("viewMeBackdoor:", "I am backdoor");
+            app.Invoke("viewMeBackdoor:", "testViewMebackdoor");
 #elif __ANDROID__
-            app.Invoke("viewMeBackdoor");
+            app.Invoke("ViewMeBackdoor", "testViewMebackdoor");
 #endif
             app.Screenshot(viewMeText);
             app.Tap(doneButton);

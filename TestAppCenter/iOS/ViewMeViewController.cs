@@ -2,6 +2,9 @@ using Foundation;
 using System;
 using UIKit;
 
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
+
 namespace TestAppCenter.iOS
 {
     public partial class ViewMeViewController : UIViewController
@@ -21,8 +24,8 @@ namespace TestAppCenter.iOS
             DoneButton.TouchUpInside += delegate
             {
 
+                Analytics.TrackEvent($"ViewMeViewController:{DoneButton.TitleLabel.Text}");
                 DismissViewController(true, null);
-
 
             };
 

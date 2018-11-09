@@ -6,17 +6,17 @@ using Android.Widget;
 using Android.OS;
 
 using Microsoft.AppCenter;
-using Microsoft.AppCenter.Push;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
-
+using Microsoft.AppCenter.Push;
+ 
 namespace TestAppCenter.Droid
 {
     [Activity(Label = "TestAppCenter", MainLauncher = true, Icon = "@mipmap/icon")]
     public class MainActivity : Activity
     {
 
-
+            
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -44,14 +44,16 @@ namespace TestAppCenter.Droid
                         }
                     }
 
+                    // Send the notification summary to debug output
+                    DBG.Debug.WriteLine(summary);
                     Toast.MakeText(this, summary, ToastLength.Long).Show();
 
-                    // Send the notification summary to debug output
-                    System.Diagnostics.Debug.WriteLine(summary);
                 };
             }
 
-            AppCenter.Start("b0887dc8-d325-492b-8494-35b4cb188fe1", typeof(Push));
+            AppCenter.LogLevel = LogLevel.Verbose;
+            AppCenter.Start("64ef7544-debc-4165-af2d-78eeebcdc1c1", typeof(Analytics), typeof(Crashes),
+                            typeof(Push));
             //Analytics.TrackEvent("Main Acitivity loaded - Android");
 
             // Get our button from the layout resource,
@@ -67,8 +69,9 @@ namespace TestAppCenter.Droid
 
                 clickMeTextField.Text = clickMeButton.Text;
 
-                //Analytics.TrackEvent("Button Clicked from  - Android");
-                //Crashes.GenerateTestCrash();
+                Analytics.TrackEvent("Button Clicked from  - Android");
+                // Crashes.GenerateTestCrash();
+
             };
 
             viewMeButton.Click += delegate
@@ -76,16 +79,19 @@ namespace TestAppCenter.Droid
 
                 var viewMeIntent = new Intent(this, typeof(ViewMeActivity));
                 viewMeIntent.PutExtra("ViewMeString", clickMeTextField.Text);
+
+                Analytics.TrackEvent("ViewMeButton clicked");
+
                 StartActivity(viewMeIntent);
 
             };
         }
                 
-        [Export("viewMeBackdoor")]
-        public void ViewMeBackdoor(string backdoorString)
+        [Export("MainBackdoor")]
+        public void MainBackdoor(string backdoorString)
         {
 
-            DBG.Debug.WriteLine(backdoorString);
+            DBG.Debug.WriteLine($"MainActivity:{backdoorString}");
 
         }
     }

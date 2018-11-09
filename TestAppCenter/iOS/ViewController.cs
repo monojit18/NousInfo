@@ -3,9 +3,9 @@
 using System.Net;
 using System.Net.Http;
 using UIKit;
+using Foundation;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
-using Foundation;
 
 namespace TestAppCenter.iOS
 {
@@ -33,9 +33,9 @@ namespace TestAppCenter.iOS
                 var title = string.Format("{0} clicks!", count++);
                 ClickMeButton.SetTitle(title, UIControlState.Normal);
 
-                //Analytics.TrackEvent("Button Clicked from iOS");
+                Analytics.TrackEvent("Button Clicked from iOS");
 
-                //Crashes.GenerateTestCrash();
+               // Crashes.GenerateTestCrash();
 
             };
 
@@ -47,7 +47,7 @@ namespace TestAppCenter.iOS
 
             };
 
-            //Analytics.TrackEvent("View Controller loaded - iOS");
+            Analytics.TrackEvent("View Controller loaded - iOS");
             //UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
 
         }
